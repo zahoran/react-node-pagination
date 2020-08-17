@@ -19,18 +19,27 @@ router.post('/tasks', [auth], async (req, res) => {
 
 router.get('/tasks', [auth], async (req, res) => {
     const match = {}
+    const options = {
+        limit: 3
+    }
 
     if (req.query.completed) {
         match.completed = req.query.completed === 'true'
     }
 
+    if (req.query.skip) {
+        options.skip = +req.query.skip
+    }
+
     try {
         // const tasks = await Task.find({owner: req.user._id})
+        const totalCount = await Task.find({owner: req.user._id}).count()
         await req.user.populate({
             path: 'tasks',
-            match
+            match,
+            options
         }).execPopulate()
-        res.send(req.user.tasks)
+        res.send({tasks: req.user.tasks, total: totalCount})
     } catch (e) {
         res.status(500).send()
     }
