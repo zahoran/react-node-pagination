@@ -29,7 +29,10 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: 'Token is required'
         }
-    }]
+    }],
+    avatar: {
+        type: Buffer
+    }
 }, {
     timestamps: true
 })
@@ -42,7 +45,7 @@ userSchema.virtual('tasks', {
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    const token = jwt.sign({_id: user._id}, 'myverysecretkey')
+    const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET_KEY)
     user.tokens = user.tokens.concat({token})
     await user.save()
     return token

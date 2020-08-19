@@ -11,7 +11,7 @@ const DataList = () => {
         getItems()
     }, [])
     const getItems = (skip) => {
-        let url = baseUrl + '/tasks';
+        let url = '/tasks';
         if (skip) {
             url += '?skip=' + skip;
         }

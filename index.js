@@ -2,17 +2,26 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const app = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT
 
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 require('./mongoose')
 
+const multer = require('multer')
+const upload = multer({
+    dest: 'images',
+    limits: {
+        fileSize: 100
+    }
+})
+
+app.post('/upload', upload.single('upload'), (req, res) => {
+    throw new Error('From my middleware')
+})
+
 app.use(express.static(path.join(__dirname, 'client/build')))
 app.use(express.json())
-if (!process.env.PORT) { // cors will be disabled on heroku, because client is hosted on the same url and port
-    app.use(cors())
-}
 app.use(userRouter)
 app.use(taskRouter)
 
